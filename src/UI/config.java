@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import LOGIC.Process;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
@@ -65,6 +66,7 @@ public class config extends javax.swing.JFrame {
         validActions2.add("LOAD");
         validActions2.add("STORE");
         validActions2.add("ADD");
+        validActions2.add("SUB");
         validActions2.add("JUM");
         validActions2.add("PUSH");
         validActions2.add("POP");
@@ -758,6 +760,7 @@ public class config extends javax.swing.JFrame {
             String line = "";
             instruction = instruction.replace(",", "");
             String[] subinst = instruction.split("\\s+");
+            //System.out.println(Arrays.toString(subinst));
             if (validActions2.contains(subinst[0].toUpperCase()) && subinst.length == 2) {
                 if (subinst[0].toUpperCase().equals("INT")) {
                     if (subinst[1].toUpperCase().equals("20H") || subinst[1].toUpperCase().equals("09H")) {
@@ -780,6 +783,25 @@ public class config extends javax.swing.JFrame {
                 } else {
                     return false;
                 }
+            }else if (subinst[0].toUpperCase().equals("PARAM")) {
+                if(subinst.length == 2){
+                    if (!tryParseInt(subinst[1])) {
+                        return false;
+                    }
+                }
+                else if(subinst.length == 3){
+                    if (!tryParseInt(subinst[1]) || !tryParseInt(subinst[2])) {
+                        return false;
+                    }
+                    
+                }else if(subinst.length == 4){
+                     if (!tryParseInt(subinst[1]) || !tryParseInt(subinst[2])  || !tryParseInt(subinst[3]) ) {
+                        return false;
+                    }
+                }
+            }
+            else{
+                return false;
             }
         }
         return res;
@@ -855,7 +877,7 @@ public class config extends javax.swing.JFrame {
             if (count <= 5) {
                 String getCell = modelFiles.getValueAt(i, 1).toString();
                 if (tryParseInt(getCell)) {
-                    if (Integer.parseInt(getCell) > 0) {
+                    if (Integer.parseInt(getCell) >= 0) {
                         Process temppRProcess = loadedFiles.get(i);
                         temppRProcess.setInitTime(Integer.parseInt(getCell));
                         //return true;

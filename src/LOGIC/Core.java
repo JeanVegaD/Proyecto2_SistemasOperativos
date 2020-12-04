@@ -13,9 +13,11 @@ public class Core implements Comparable {
     
     private int positionAtArray;
     private Process currentProcess = null;
+    private String algorithm = "";
     
-    public Core(int position){
+    public Core(int position,String p_algorithm){
         this.positionAtArray= position;
+        this.algorithm=p_algorithm;
     }
 
     public int getPositionAtArray() {
@@ -31,18 +33,27 @@ public class Core implements Comparable {
     public void setCurrentProcess(Process currentProcess) {
         this.currentProcess = currentProcess;
     }
-    
-    public void executeInstruction(){
-        
-    }
-    
-    
+       
 
     @Override
     public int compareTo(Object o) {
-        int comapeCore=((Core)o).getCurrentProcess().getInitTime();
-        /* For Ascending order*/
-        return this.currentProcess.getInitTime()-comapeCore;
+        if(algorithm.equals("FCFS - First Come First Served")){
+            int comapeCore=((Core)o).getCurrentProcess().getInitTime();
+            return this.currentProcess.getInitTime()-comapeCore;
+            
+        }else if(algorithm.equals("SRT - Shortest Remaining Time")){
+            return 0;
+            
+        }else if(algorithm.equals("SJF - Shortest Job First")){
+            int comapeCore=((Core)o).getCurrentProcess().getBurstTime();
+            return this.currentProcess.getBurstTime()-comapeCore;
+            
+        }else if(algorithm.equals("HHRR - Highest Response Ratio Next")){
+            return 0;
+        }else{
+            return 0;
+        }
+  
     }
 
 

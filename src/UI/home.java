@@ -36,6 +36,7 @@ public class home extends javax.swing.JFrame {
     Computer computer;
     int sizeOfDisply = 0;
     int executionTime = 0;
+    DefaultTableModel modelInitProcess;
     DefaultTableModel modelTableCores;
     
     DefaultTableModel modelTableMain;
@@ -63,7 +64,6 @@ public class home extends javax.swing.JFrame {
         
         setTableConfig();
         actualizarTablaInicialProcesos();
-        paintTableProcess();
         
         sizeOfDisply= computer.getShowArrayTable()[0].length;
         setTableConfig();
@@ -127,6 +127,7 @@ public class home extends javax.swing.JFrame {
             reFillTable();
             repaintTable();  
             actualizarTablasMemorias();
+            actualizarTablaInicialProcesos();
             
             Thread.sleep(1000);
             executionTime++;
@@ -138,7 +139,8 @@ public class home extends javax.swing.JFrame {
     
     /*Rellemna la tabla de los procesos*/
     private void actualizarTablaInicialProcesos(){
-        DefaultTableModel modelTemp = (DefaultTableModel) tbl_processFiles.getModel();
+        modelInitProcess = (DefaultTableModel) tbl_processFiles.getModel();
+        clearTable(modelInitProcess);
         
          ArrayList<LOGIC.Process> tempLoadedProcess = computer.getLoadedFiles();
           for( int i = 0; i<tempLoadedProcess.size(); i++){
@@ -147,34 +149,37 @@ public class home extends javax.swing.JFrame {
                 tempProcess.getName(),
                 String.valueOf(tempProcess.getInitTime()),
                 String.valueOf(tempProcess.getBurstTime()),
+                String.valueOf(tempProcess.getFinishTime()),
+                String.valueOf(tempProcess.getTr()),
+                String.valueOf(tempProcess.getTrts()),
                 tempProcess.getAC(),
                 tempProcess.getAX(),
                 tempProcess.getBX(),
                 tempProcess.getCX(),
                 tempProcess.getDX()
                         };
-            modelTemp.addRow(objectData);            
+            modelInitProcess.addRow(objectData);            
         }
-        tbl_processFiles.setModel(modelTemp);
+        tbl_processFiles.setModel(modelInitProcess);
+        paintTableProcess();
         
     }
     
     
     private void paintTableProcess(){
         ArrayList<LOGIC.Process> tempLoadedProcess = computer.getLoadedFiles();
-        for( int i = 0; i<8; i++){
+        for( int i = 0; i<11; i++){
 
-                
-                tbl_processFiles.getColumnModel().getColumn(i).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-                    JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                    
-                    final LOGIC.Process temp = tempLoadedProcess.get(row);
-                    l.setBackground(Color.decode(temp.getColorProcess()));
-                    return l;
-                    }
-                }); 
+            tbl_processFiles.getColumnModel().getColumn(i).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+                final LOGIC.Process temp = tempLoadedProcess.get(row);
+                l.setBackground(Color.decode(temp.getColorProcess()));
+                return l;
+                }
+            }); 
 
         }
          tbl_processFiles.repaint();
@@ -310,6 +315,11 @@ public class home extends javax.swing.JFrame {
         tbl_virtualMemory = new javax.swing.JTable();
         jScrollPane7 = new javax.swing.JScrollPane();
         tbl_mainMemory = new javax.swing.JTable();
+        jLabel32 = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        jLabel37 = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
 
         jLabel24.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 24)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(69, 90, 100));
@@ -324,18 +334,18 @@ public class home extends javax.swing.JFrame {
         jLabel25.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel25.setForeground(new java.awt.Color(69, 90, 100));
         jLabel25.setText("Virtual memory");
-        jPanel1.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 30, 130, 40));
+        jPanel1.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 30, 130, 40));
 
         tbl_processFiles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Process", "Arrival time", "Service time", "AC", "AX", "BX", "CX", "DX"
+                "Process", "Arrival time", "Service time", "Final time", "Tr", "Tr/Ts", "AC", "AX", "BX", "CX", "DX"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, true, true, true, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -344,7 +354,7 @@ public class home extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(tbl_processFiles);
 
-        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 510, 170));
+        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 700, 170));
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
@@ -367,83 +377,83 @@ public class home extends javax.swing.JFrame {
         tbl_showCores.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbl_showCores);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 1190, 170));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 340, 1310, 170));
 
         jLabel4.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(69, 90, 100));
         jLabel4.setText("Information");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 20, -1, -1));
-        jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 1220, 20));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 30, -1, -1));
+        jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 1390, 20));
 
         jLabel26.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 24)); // NOI18N
         jLabel26.setForeground(new java.awt.Color(69, 90, 100));
         jLabel26.setText("Cores execution");
-        jPanel1.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 290, 40));
+        jPanel1.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 210, 40));
 
         jLabel27.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel27.setForeground(new java.awt.Color(69, 90, 100));
         jLabel27.setText("Main memory");
-        jPanel1.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 30, 130, 40));
+        jPanel1.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 30, 130, 40));
 
         lbl_excution.setFont(new java.awt.Font("Microsoft YaHei UI", 0, 14)); // NOI18N
         lbl_excution.setForeground(new java.awt.Color(69, 90, 100));
         lbl_excution.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl_excution.setText("Main memory");
-        jPanel1.add(lbl_excution, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 200, 150, 30));
+        jPanel1.add(lbl_excution, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 210, 150, 30));
 
         jLabel29.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel29.setForeground(new java.awt.Color(69, 90, 100));
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel29.setText("Execution time");
-        jPanel1.add(jLabel29, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 200, 150, 30));
+        jPanel1.add(jLabel29, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 210, 150, 30));
 
         jLabel30.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel30.setForeground(new java.awt.Color(69, 90, 100));
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel30.setText("Main memory");
-        jPanel1.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 80, 150, 30));
+        jLabel30.setText("Core 5");
+        jPanel1.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 470, 60, 20));
 
         jLabel31.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel31.setForeground(new java.awt.Color(69, 90, 100));
         jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel31.setText("Virtual memory");
-        jPanel1.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 110, 150, 30));
+        jPanel1.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 120, 150, 30));
 
         lbl_mainMemory.setFont(new java.awt.Font("Microsoft YaHei UI", 0, 14)); // NOI18N
         lbl_mainMemory.setForeground(new java.awt.Color(69, 90, 100));
         lbl_mainMemory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl_mainMemory.setText("Main memory");
-        jPanel1.add(lbl_mainMemory, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 80, 150, 30));
+        jPanel1.add(lbl_mainMemory, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 90, 150, 30));
 
         lbl_memoryAssigment.setFont(new java.awt.Font("Microsoft YaHei UI", 0, 14)); // NOI18N
         lbl_memoryAssigment.setForeground(new java.awt.Color(69, 90, 100));
         lbl_memoryAssigment.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl_memoryAssigment.setText("Main memory");
-        jPanel1.add(lbl_memoryAssigment, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 140, 130, 30));
+        jPanel1.add(lbl_memoryAssigment, new org.netbeans.lib.awtextra.AbsoluteConstraints(1250, 150, 130, 30));
 
         jLabel34.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel34.setForeground(new java.awt.Color(69, 90, 100));
         jLabel34.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel34.setText("Planning algorithm");
-        jPanel1.add(jLabel34, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 170, 150, 30));
+        jPanel1.add(jLabel34, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 180, 150, 30));
 
         jLabel35.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
         jLabel35.setForeground(new java.awt.Color(69, 90, 100));
         jLabel35.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel35.setText("Memory assignment");
-        jPanel1.add(jLabel35, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 140, 150, 30));
+        jPanel1.add(jLabel35, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 150, 150, 30));
 
         lbl_virtualMemory.setFont(new java.awt.Font("Microsoft YaHei UI", 0, 14)); // NOI18N
         lbl_virtualMemory.setForeground(new java.awt.Color(69, 90, 100));
         lbl_virtualMemory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl_virtualMemory.setText("Main memory");
-        jPanel1.add(lbl_virtualMemory, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 110, 140, 30));
+        jPanel1.add(lbl_virtualMemory, new org.netbeans.lib.awtextra.AbsoluteConstraints(1240, 120, 140, 30));
 
         lbl_plannignAlgorithm.setFont(new java.awt.Font("Microsoft YaHei UI", 0, 14)); // NOI18N
         lbl_plannignAlgorithm.setForeground(new java.awt.Color(69, 90, 100));
         lbl_plannignAlgorithm.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl_plannignAlgorithm.setText("Main memory");
-        jPanel1.add(lbl_plannignAlgorithm, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 170, 130, 30));
+        jPanel1.add(lbl_plannignAlgorithm, new org.netbeans.lib.awtextra.AbsoluteConstraints(1250, 180, 130, 30));
 
         jLabel28.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 24)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(69, 90, 100));
@@ -468,7 +478,7 @@ public class home extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tbl_virtualMemory);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 70, 160, 170));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 70, 160, 170));
 
         tbl_mainMemory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -488,13 +498,43 @@ public class home extends javax.swing.JFrame {
         });
         jScrollPane7.setViewportView(tbl_mainMemory);
 
-        jPanel1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 70, 160, 170));
+        jPanel1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 70, 160, 170));
+
+        jLabel32.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
+        jLabel32.setForeground(new java.awt.Color(69, 90, 100));
+        jLabel32.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel32.setText("Main memory");
+        jPanel1.add(jLabel32, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 90, 150, 30));
+
+        jLabel33.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
+        jLabel33.setForeground(new java.awt.Color(69, 90, 100));
+        jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel33.setText("Core 1");
+        jPanel1.add(jLabel33, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 70, 20));
+
+        jLabel36.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
+        jLabel36.setForeground(new java.awt.Color(69, 90, 100));
+        jLabel36.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel36.setText("Core 2");
+        jPanel1.add(jLabel36, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 395, 60, 20));
+
+        jLabel37.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
+        jLabel37.setForeground(new java.awt.Color(69, 90, 100));
+        jLabel37.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel37.setText("Core 3");
+        jPanel1.add(jLabel37, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 420, 60, 20));
+
+        jLabel38.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 14)); // NOI18N
+        jLabel38.setForeground(new java.awt.Color(69, 90, 100));
+        jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel38.setText("Core 4");
+        jPanel1.add(jLabel38, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 445, 60, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1220, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1406, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -548,8 +588,13 @@ public class home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

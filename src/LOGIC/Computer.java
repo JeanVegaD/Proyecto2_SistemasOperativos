@@ -36,11 +36,11 @@ public class Computer {
     
     ArrayList<Object[]> mainMemoryContent = new ArrayList<>();
     ArrayList<Object[]> virtualMemoryContent = new ArrayList<>();
-    LOGIC.Core C1 = new Core(0);
-    LOGIC.Core C2 = new Core(1);
-    LOGIC.Core C3 = new Core(2);
-    LOGIC.Core C4 = new Core(3);
-    LOGIC.Core C5 = new Core(4);
+    LOGIC.Core C1;
+    LOGIC.Core C2;
+    LOGIC.Core C3;
+    LOGIC.Core C4;
+    LOGIC.Core C5;
     
     LOGIC.Core currentCore = null;
     ArrayList<LOGIC.Core> colaEjecucion = new ArrayList<LOGIC.Core>();
@@ -73,12 +73,21 @@ public class Computer {
         
         setShowArrayTable();
         setConfigMemory();
+        
+        //definicion de cores
+        C1 = new Core(0,selectedAlgothim);
+        C2 = new Core(1,selectedAlgothim);
+        C3 = new Core(2,selectedAlgothim);
+        C4 = new Core(3,selectedAlgothim);
+        C5 = new Core(4,selectedAlgothim);
          
     }
     
     public Computer(){
         setShowArrayTable();  
         setConfigMemory();
+        
+        
     }
     
     
@@ -245,33 +254,22 @@ public class Computer {
                         C1.setCurrentProcess(tempProcess);
                         tempProcess.loadProcesstoCore(time);
                         
-                        System.out.println("cargue en el core 1");
-                        insertOnQueue(C1);
-
                     }else if(C2.getCurrentProcess()==null){
                         C2.setCurrentProcess(tempProcess);
                         tempProcess.loadProcesstoCore(time);
-                        System.out.println("cargue en el core 2");
-                        insertOnQueue(C2);
+
 
                     }else if(C3.getCurrentProcess()==null){
                         C3.setCurrentProcess(tempProcess);
                         tempProcess.loadProcesstoCore(time);
-                        System.out.println("cargue en el core 3");
-                        insertOnQueue(C3);
 
                     }else if(C4.getCurrentProcess()==null){
                         C4.setCurrentProcess(tempProcess);
                         tempProcess.loadProcesstoCore(time);
-                        System.out.println("cargue en el core 4");
-                        insertOnQueue(C4);
-
+                        
                     }else if(C5.getCurrentProcess()==null){
                         C5.setCurrentProcess(tempProcess);
                         tempProcess.loadProcesstoCore(time);
-                        System.out.println("cargue en el core 5");
-                        insertOnQueue(C5);
-
                     }
                 }
             }
@@ -334,12 +332,103 @@ public class Computer {
         if(selectedAlgothim.equals("FCFS - First Come First Served")){
             colaEjecucion.add(tempCore);
             Collections.sort(colaEjecucion);
+            
+        }else if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+             colaEjecucion.add(tempCore);
+            
+        }else if(selectedAlgothim.equals("SJF - Shortest Job First")){
+            colaEjecucion.add(tempCore);
+            Collections.sort(colaEjecucion);
+            
+        }else if(selectedAlgothim.equals("HHRR - Highest Response Ratio Next")){
+            colaEjecucion.add(tempCore);
+            
+        }else{
+            
         }
     }
     
+    public void loadprocesstoQueue(int time){
+        if(C1.getCurrentProcess()!= null){
+            if(C1.getCurrentProcess().getInitTime()==time && !colaEjecucion.contains(C1)){
+                insertOnQueue(C1);
+                if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+                    if(currentCore!=null){
+                        System.out.println("devolvi el proceso");
+                        insertOnQueue(currentCore);
+                        currentCore = null;
+                    }
+
+                }
+            }
+        }
+        if(C2.getCurrentProcess()!= null){
+            if(C2.getCurrentProcess().getInitTime()==time && !colaEjecucion.contains(C2)){
+                insertOnQueue(C2);
+                if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+                    if(currentCore!=null){
+                        System.out.println("devolvi el proceso");
+                        insertOnQueue(currentCore);
+                        currentCore = null;
+                    }
+
+                }
+
+            }
+        }
+        if(C3.getCurrentProcess()!= null){
+            if(C3.getCurrentProcess().getInitTime()==time && !colaEjecucion.contains(C3)){
+                insertOnQueue(C3);
+                if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+                    if(currentCore!=null){
+                        System.out.println("devolvi el proceso");
+                        insertOnQueue(currentCore);
+                        currentCore = null;
+                    }
+
+                }
+
+            }
+        }
+        if(C4.getCurrentProcess()!= null){
+            if(C4.getCurrentProcess().getInitTime()==time && !colaEjecucion.contains(C4)){
+                insertOnQueue(C4);
+                if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+                    if(currentCore!=null){
+                        System.out.println("devolvi el proceso");
+                        insertOnQueue(currentCore);
+                        currentCore = null;
+                    }
+
+                }
+
+            }
+        }
+        if(C5.getCurrentProcess()!= null){
+            if(C5.getCurrentProcess().getInitTime()==time && !colaEjecucion.contains(C5)){
+                insertOnQueue(C5);
+                if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+                    if(currentCore!=null){
+                        System.out.println("devolvi el proceso");
+                        insertOnQueue(currentCore);
+                        currentCore = null;
+                    }
+
+                }
+                
+            }
+        }
+        
+        
+        
+        
+        
+        
+    }
 
     public void increaseTime(int time){
         actualziarMemorias(time);
+        loadprocesstoQueue(time);
         if(currentCore==null){
             setExecutionCore(time);
         }
@@ -355,7 +444,8 @@ public class Computer {
                 currentCore.setCurrentProcess(null);
                 currentCore=null;
             }
-        }   
+        }
+        increaseWaitingTime(time);
     }
     
     private void setExecutionCore(int time){
@@ -364,22 +454,73 @@ public class Computer {
                 if(colaEjecucion.get(0).getCurrentProcess().getInitTime()<=time){
                     currentCore= colaEjecucion.get(0);
                     colaEjecucion.remove(0);
+                    
                 }
-            }
+            }  
+        }else if(selectedAlgothim.equals("SRT - Shortest Remaining Time")){
+            if(colaEjecucion.size()>0){
+                //obtener el proceso de remaingn time
+                int bt = colaEjecucion.get(0).getCurrentProcess().getBurstTime();
+                int et = colaEjecucion.get(0).getCurrentProcess().getCountOfInstructionExecuted();
+                int restante =  bt- et;
+                int  res =restante;
+                Core tempCore=colaEjecucion.get(0);
+                for(Core forCore: colaEjecucion){
+                    bt = forCore.getCurrentProcess().getBurstTime();
+                    et = forCore.getCurrentProcess().getCountOfInstructionExecuted();
+                    restante =  bt- et;
+                    if(restante<=res){
+                        System.out.print("restante: ");
+                        System.out.println(restante);
+                        res=restante;
+                        tempCore=forCore;
+                    }
+                }
+                currentCore=tempCore;
+                colaEjecucion.remove(tempCore);
+            }  
+        }else if(selectedAlgothim.equals("SJF - Shortest Job First")){
+            if(colaEjecucion.size()>0){
+                if(colaEjecucion.get(0).getCurrentProcess().getInitTime()<=time){
+                    currentCore= colaEjecucion.get(0);
+                    colaEjecucion.remove(0);
+                }
+            }  
+        }else if(selectedAlgothim.equals("HHRR - Highest Response Ratio Next")){
+            if(colaEjecucion.size()>0){
+                //obtener el proceso de mejor tamano
+                double rr =0;
+                Core tempCore=null;
+                for(Core forCore: colaEjecucion){
+                    int s2 = forCore.getCurrentProcess().getBurstTime();
+                    int w2 = forCore.getCurrentProcess().getWaitingTime();
+                    int  suma2 = w2+s2;
+                    double  rr2 = (double) suma2 / s2;
+                    
+                    if(rr2>=rr){
+                        rr=rr2;
+                        tempCore=forCore;
+                    }
+                }
+                currentCore=tempCore;
+                colaEjecucion.remove(tempCore);
+            }  
+        }else{
             
         }
     }
     
-    
+    public void increaseWaitingTime(int time){
+        for(Core coretemp: colaEjecucion ){
+            if(time> coretemp.getCurrentProcess().getInitTime()){
+                 coretemp.getCurrentProcess().increaseWaitingTime();
+            }
+        }
+    }
     
     private void setShowExceutedProcessTime(int i, int j, String color){
         showArrayTable[i][j]=color;
     }
-    
-    
-    
-    //miscelanus
-
     
     
     /*geters*/

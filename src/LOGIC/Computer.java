@@ -348,10 +348,6 @@ public class Computer {
             colaEjecucion.add(tempCore);
         }
         
-        for(Core temp: colaEjecucion){
-            System.out.println(temp.getCurrentProcess().getID());
-        }
-        System.out.println("");
     }
     
     public void loadprocesstoQueue(int time){
@@ -452,7 +448,7 @@ public class Computer {
             setShowExceutedProcessTime(currentCore.getPositionAtArray(),time,currentCore.getCurrentProcess().getColorProcess());
             
             //preguntar si ya termino el proceso y realizar algo
-            if(currentCore.getCurrentProcess().isEndOFProcess()){
+            if(currentCore.getCurrentProcess().isEndOFProcess(time)){
                 currentCore.setCurrentProcess(null);
                 currentCore=null;
             }
@@ -485,8 +481,6 @@ public class Computer {
                     et = forCore.getCurrentProcess().getCountOfInstructionExecuted();
                     restante =  bt- et;
                     if(restante<=res){
-                        System.out.print("restante: ");
-                        System.out.println(restante);
                         res=restante;
                         tempCore=forCore;
                     }

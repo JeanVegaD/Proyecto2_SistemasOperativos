@@ -26,8 +26,8 @@ public class Process {
     private int burstTime = 0;
     private int waitingTime = 0;
     private int finishTime = 0;
-    private int tr = 0;
-    private int trts = 0;
+    private double tr = 0;
+    private double trts = 0;
     private String estado = "new";
     private String PC = "0";
     private String AC = "0";;
@@ -360,9 +360,12 @@ public class Process {
     public void increaseWaitingTime(){
         this.waitingTime++;
     }
-    public boolean isEndOFProcess(){
+    public boolean isEndOFProcess(int time){
         if(countOfInstructionExecuted == instruccionsOfProcess.size()){
             this.estado = "finished";
+            this.finishTime=time;
+            this.tr=  (double) this.finishTime-this.initTime; 
+            this.trts= (double) this.tr/this.burstTime;
             return true;
         }else{
             return false;
@@ -473,11 +476,11 @@ public class Process {
         this.DX = DX;
     }
 
-    public int getTr() {
+    public double getTr() {
         return tr;
     }
 
-    public int getTrts() {
+    public double getTrts() {
         return trts;
     }
 

@@ -856,6 +856,7 @@ public class config extends javax.swing.JFrame {
             String quatum = txt_quantum.getText();
             if (tryParseInt(quatum)) {
                 if (Integer.parseInt(quatum) > 0) {
+                    this.quantum= Integer.parseInt(quatum);
                     return true;
                 } else {
                     return false;
